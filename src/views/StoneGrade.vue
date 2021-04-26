@@ -1,282 +1,284 @@
 <template>
   <div>
-    <v-row class='text-center'>
-      <v-col
-        class='mb-5'
-        cols='12'>
-        <v-container>
-          <v-row justify='center' align='center'>
-            <v-radio-group
-              v-model='position'
-              @change='handlePositionChange'
-              row
-              prepend-icon='fal fa-dice-d10'
-              label='魂石位置'
-            >
-              <v-radio
-                label='天'
-                value='tian'
-              ></v-radio>
-              <v-radio
-                label='地'
-                value='di'
-              ></v-radio>
-              <v-radio
-                label='荒'
-                value='huang'
-              ></v-radio>
-            </v-radio-group>
-          </v-row>
-        </v-container>
-        <v-form v-model='model' ref='form'>
+    <v-container>
+      <v-row class='text-center'>
+        <v-col
+          class='mb-5'
+          cols='12'>
           <v-container>
             <v-row justify='center' align='center'>
-              <v-col cols='8' xs='4' md='4'>
-                <v-select
-                  v-model='stone.first.index'
-                  :items='properties'
-                  :rules='indexRule'
-                  item-text='name'
-                  item-value='index'
-                  no-data-text='魂石词条'
-                  label='魂石词条'
-                >
-                  <template v-slot:selection='{item}'>
-                    <v-icon small left>{{ item.icon }}</v-icon>
-                    {{ item.name }}
-                  </template>
-                  <template v-slot:item='{ item }'>
-                    <v-icon small left>{{ item.icon }}</v-icon>
-                    {{ item.name }}
-                  </template>
-                </v-select>
-              </v-col>
-              <v-col cols='4' xs='2' md='2'>
-                <v-select
-                  v-model='stone.first.value'
-                  :items='range.first'
-                  :rules='valueRule'
-                  no-data-text='请选择魂石词条'
-                  label='词条数值'
-                ></v-select>
-              </v-col>
-            </v-row>
-
-            <v-row justify='center' align='center'>
-              <v-col cols='8' xs='4' md='4'>
-                <v-select
-                  v-model='stone.second.index'
-                  :items='properties'
-                  :rules='indexRule'
-                  item-text='name'
-                  item-value='index'
-                  label='魂石词条'
-                >
-                  <template v-slot:selection='{item}'>
-                    <v-icon small left>{{ item.icon }}</v-icon>
-                    {{ item.name }}
-                  </template>
-                  <template v-slot:item='{ item }'>
-                    <span style='width: 20px'><v-icon small left>{{ item.icon }}</v-icon></span>
-                    {{ item.name }}
-                  </template>
-                </v-select>
-              </v-col>
-              <v-col cols='4' xs='2' md='2'>
-                <v-select
-                  v-model='stone.second.value'
-                  :items='range.second'
-                  :rules='valueRule'
-                  no-data-text='请选择魂石词条'
-                  label='词条数值'
-                ></v-select>
-              </v-col>
-            </v-row>
-
-            <v-row justify='center' align='center'>
-              <v-col cols='8' xs='4' md='4'>
-                <v-select
-                  v-model='stone.third.index'
-                  :items='properties'
-                  :rules='indexRule'
-                  item-text='name'
-                  item-value='index'
-                  label='魂石词条'
-                >
-                  <template v-slot:selection='{item}'>
-                    <v-icon small left>{{ item.icon }}</v-icon>
-                    {{ item.name }}
-                  </template>
-                  <template v-slot:item='{ item }'>
-                    <span style='width: 20px'><v-icon small left>{{ item.icon }}</v-icon></span>
-                    {{ item.name }}
-                  </template>
-                </v-select>
-              </v-col>
-              <v-col cols='4' xs='2' md='2'>
-                <v-select
-                  v-model='stone.third.value'
-                  :items='range.third'
-                  :rules='valueRule'
-                  no-data-text='请选择魂石词条'
-                  label='词条数值'
-                ></v-select>
-              </v-col>
-            </v-row>
-            <v-row justify='center' align='center'>
-              <v-col cols='8' xs='4' md='4'>
-                <v-select
-                  v-model='stone.fourth.index'
-                  :items='properties'
-                  :rules='indexRule'
-                  item-text='name'
-                  item-value='index'
-                  label='魂石词条'
-                >
-                  <template v-slot:selection='{item}'>
-                    <v-icon small left>{{ item.icon }}</v-icon>
-                    {{ item.name }}
-                  </template>
-                  <template v-slot:item='{ item }'>
-                    <span style='width: 20px'><v-icon small left>{{ item.icon }}</v-icon></span>
-                    {{ item.name }}
-                  </template>
-                </v-select>
-              </v-col>
-              <v-col cols='4' xs='2' md='2'>
-                <v-select
-                  v-model='stone.fourth.value'
-                  :items='range.fourth'
-                  :rules='valueRule'
-                  no-data-text='请选择魂石词条'
-                  label='词条数值'
-                ></v-select>
-              </v-col>
-            </v-row>
-
-            <!-- 移动端显示结果对话框 -->
-            <v-dialog
-              v-model='dialog'
-              width='500'
-            >
-              <!-- 对话框主体 -->
-              <v-card
-                class='mx-auto elevation-20'
-                color='#3166ba'
-                dark>
-                <v-card-title>
-                  <div>
-                    <div class='headline'>
-                      魂石属性：
-                    </div>
-                  </div>
-                </v-card-title>
-
-                <v-card-text>
-                  <div>
-                    <v-row justify='space-between'>
-                      <v-col sm='6' xs='6'>
-                        <v-icon medium left>{{ showStone.first.icon }}</v-icon>
-                        <span style='font-size: 16px;font-weight: bold'>{{ showStone.first.name }} {{ stone.first.value }}%</span>
-                      </v-col>
-                      <v-col cols='6'>
-                        <v-icon medium left>{{ showStone.second.icon }}</v-icon>
-                        <span style='font-size: 16px;font-weight: bold'>{{ showStone.second.name }} {{ stone.second.value }}%</span>
-                      </v-col>
-                    </v-row>
-                    <v-row justify='space-between'>
-                      <v-col sm='6' xs='6'>
-                        <v-icon medium left>{{ showStone.third.icon }}</v-icon>
-                        <span style='font-size: 16px;font-weight: bold'>{{ showStone.third.name }} {{ stone.third.value }}%</span>
-                      </v-col>
-                      <v-col cols='6'>
-                        <v-icon medium left>{{ showStone.fourth.icon }}</v-icon>
-                        <span style='font-size: 16px;font-weight: bold'>{{ showStone.fourth.name }} {{ stone.fourth.value }}%</span>
-                      </v-col>
-                    </v-row>
-                    <v-row justify='center'>
-                      <v-col md='12' xs='4'>
-                        <div style='display: flex; align-items: center;'>
-                          <span style='font-size: 20px; color: #ffffff'>魂石得分：</span>
-                          <span style='font-size: 40px; color: #ffffff'>{{ result }}</span>
-                        </div>
-                      </v-col>
-                    </v-row>
-                    <v-row justify='center'>
-                      <v-col md='12' xs='4'>
-                        <div style='display: flex; align-items: center;'>
-                          <span style='font-size: 20px; color: #ffffff'>评估结果：</span>
-                          <v-rating dense small readonly half-increments :length='6' v-model='rating'
-                                    color='yellow darken-3'
-                                    background-color='grey darken-2'></v-rating>
-                          <span style='font-size: 10px' class='ml-2'>({{ ratingLabel }})</span>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </div>
-                </v-card-text>
-
-                <v-divider></v-divider>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    text
-                    @click='dialog = false'
-                  >
-                    关闭
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <v-row justify='center'>
-              <v-col cols='12' md='6'>
-                <v-btn color='primary' width='100%' @click.stop='submit' class='mr-4'><v-icon size='medium'>mdi-checkbox-marked-circle</v-icon>立即计算</v-btn>
-              </v-col>
-            </v-row>
-            <v-row justify='center'>
-              <v-col cols='12' md='6'>
-                <v-btn @click='resetForm' width='100%'>
-                  <v-icon size='medium'>mdi-refresh</v-icon>
-                  重置数据
-                </v-btn>
-              </v-col>
+              <v-radio-group
+                v-model='position'
+                @change='handlePositionChange'
+                row
+                prepend-icon='fal fa-dice-d10'
+                label='魂石位置'
+              >
+                <v-radio
+                  label='天'
+                  value='tian'
+                ></v-radio>
+                <v-radio
+                  label='地'
+                  value='di'
+                ></v-radio>
+                <v-radio
+                  label='荒'
+                  value='huang'
+                ></v-radio>
+              </v-radio-group>
             </v-row>
           </v-container>
-        </v-form>
-      </v-col>
-    </v-row>
-    <!-- 鸣谢纸片 -->
-    <v-row justify='center'>
-      <v-col cols='12' xs='6'>
-        <div style='display: flex; justify-content: center'>
-          <v-chip
-            class='ma-4'
-            color='cyan'
-            label
-            @click='toUrl(0)'
-          >
-            <v-icon left color='white'>
-              mdi-account-circle-outline
-            </v-icon>
-            <span style='color: white'>算法提供: @泡椒啊</span>
-          </v-chip>
-        </div>
-        <div style='display: flex; justify-content: center'>
-          <v-chip
-            class='ma-4'
-            color='pink'
-            label
-            @click='toUrl(1)'
-          >
-            <v-icon left color='white'>
-              mdi-laptop
-            </v-icon>
-            <span style='color: white'>Powered By: @Cruii</span>
-          </v-chip>
-        </div>
-      </v-col>
-    </v-row>
+          <v-form v-model='model' ref='form'>
+            <v-container>
+              <v-row justify='center' align='center'>
+                <v-col cols='8' xs='4' md='4'>
+                  <v-select
+                    v-model='stone.first.index'
+                    :items='properties'
+                    :rules='indexRule'
+                    item-text='name'
+                    item-value='index'
+                    no-data-text='魂石词条'
+                    label='魂石词条'
+                  >
+                    <template v-slot:selection='{item}'>
+                      <v-icon small left>{{ item.icon }}</v-icon>
+                      {{ item.name }}
+                    </template>
+                    <template v-slot:item='{ item }'>
+                      <v-icon small left>{{ item.icon }}</v-icon>
+                      {{ item.name }}
+                    </template>
+                  </v-select>
+                </v-col>
+                <v-col cols='4' xs='2' md='2'>
+                  <v-select
+                    v-model='stone.first.value'
+                    :items='range.first'
+                    :rules='valueRule'
+                    no-data-text='请选择魂石词条'
+                    label='词条数值'
+                  ></v-select>
+                </v-col>
+              </v-row>
+
+              <v-row justify='center' align='center'>
+                <v-col cols='8' xs='4' md='4'>
+                  <v-select
+                    v-model='stone.second.index'
+                    :items='properties'
+                    :rules='indexRule'
+                    item-text='name'
+                    item-value='index'
+                    label='魂石词条'
+                  >
+                    <template v-slot:selection='{item}'>
+                      <v-icon small left>{{ item.icon }}</v-icon>
+                      {{ item.name }}
+                    </template>
+                    <template v-slot:item='{ item }'>
+                      <span style='width: 20px'><v-icon small left>{{ item.icon }}</v-icon></span>
+                      {{ item.name }}
+                    </template>
+                  </v-select>
+                </v-col>
+                <v-col cols='4' xs='2' md='2'>
+                  <v-select
+                    v-model='stone.second.value'
+                    :items='range.second'
+                    :rules='valueRule'
+                    no-data-text='请选择魂石词条'
+                    label='词条数值'
+                  ></v-select>
+                </v-col>
+              </v-row>
+
+              <v-row justify='center' align='center'>
+                <v-col cols='8' xs='4' md='4'>
+                  <v-select
+                    v-model='stone.third.index'
+                    :items='properties'
+                    :rules='indexRule'
+                    item-text='name'
+                    item-value='index'
+                    label='魂石词条'
+                  >
+                    <template v-slot:selection='{item}'>
+                      <v-icon small left>{{ item.icon }}</v-icon>
+                      {{ item.name }}
+                    </template>
+                    <template v-slot:item='{ item }'>
+                      <span style='width: 20px'><v-icon small left>{{ item.icon }}</v-icon></span>
+                      {{ item.name }}
+                    </template>
+                  </v-select>
+                </v-col>
+                <v-col cols='4' xs='2' md='2'>
+                  <v-select
+                    v-model='stone.third.value'
+                    :items='range.third'
+                    :rules='valueRule'
+                    no-data-text='请选择魂石词条'
+                    label='词条数值'
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-row justify='center' align='center'>
+                <v-col cols='8' xs='4' md='4'>
+                  <v-select
+                    v-model='stone.fourth.index'
+                    :items='properties'
+                    :rules='indexRule'
+                    item-text='name'
+                    item-value='index'
+                    label='魂石词条'
+                  >
+                    <template v-slot:selection='{item}'>
+                      <v-icon small left>{{ item.icon }}</v-icon>
+                      {{ item.name }}
+                    </template>
+                    <template v-slot:item='{ item }'>
+                      <span style='width: 20px'><v-icon small left>{{ item.icon }}</v-icon></span>
+                      {{ item.name }}
+                    </template>
+                  </v-select>
+                </v-col>
+                <v-col cols='4' xs='2' md='2'>
+                  <v-select
+                    v-model='stone.fourth.value'
+                    :items='range.fourth'
+                    :rules='valueRule'
+                    no-data-text='请选择魂石词条'
+                    label='词条数值'
+                  ></v-select>
+                </v-col>
+              </v-row>
+
+              <!-- 移动端显示结果对话框 -->
+              <v-dialog
+                v-model='dialog'
+                width='500'
+              >
+                <!-- 对话框主体 -->
+                <v-card
+                  class='mx-auto elevation-20'
+                  color='#3166ba'
+                  dark>
+                  <v-card-title>
+                    <div>
+                      <div class='headline'>
+                        魂石属性：
+                      </div>
+                    </div>
+                  </v-card-title>
+
+                  <v-card-text>
+                    <div>
+                      <v-row justify='space-between'>
+                        <v-col sm='6' xs='6'>
+                          <v-icon medium left>{{ showStone.first.icon }}</v-icon>
+                          <span style='font-size: 16px;font-weight: bold'>{{ showStone.first.name }} {{ stone.first.value }}%</span>
+                        </v-col>
+                        <v-col cols='6'>
+                          <v-icon medium left>{{ showStone.second.icon }}</v-icon>
+                          <span style='font-size: 16px;font-weight: bold'>{{ showStone.second.name }} {{ stone.second.value }}%</span>
+                        </v-col>
+                      </v-row>
+                      <v-row justify='space-between'>
+                        <v-col sm='6' xs='6'>
+                          <v-icon medium left>{{ showStone.third.icon }}</v-icon>
+                          <span style='font-size: 16px;font-weight: bold'>{{ showStone.third.name }} {{ stone.third.value }}%</span>
+                        </v-col>
+                        <v-col cols='6'>
+                          <v-icon medium left>{{ showStone.fourth.icon }}</v-icon>
+                          <span style='font-size: 16px;font-weight: bold'>{{ showStone.fourth.name }} {{ stone.fourth.value }}%</span>
+                        </v-col>
+                      </v-row>
+                      <v-row justify='center'>
+                        <v-col md='12' xs='4'>
+                          <div style='display: flex; align-items: center;'>
+                            <span style='font-size: 20px; color: #ffffff'>魂石得分：</span>
+                            <span style='font-size: 40px; color: #ffffff'>{{ result }}</span>
+                          </div>
+                        </v-col>
+                      </v-row>
+                      <v-row justify='center'>
+                        <v-col md='12' xs='4'>
+                          <div style='display: flex; align-items: center;'>
+                            <span style='font-size: 20px; color: #ffffff'>评估结果：</span>
+                            <v-rating dense small readonly half-increments :length='6' v-model='rating'
+                                      color='yellow darken-3'
+                                      background-color='grey darken-2'></v-rating>
+                            <span style='font-size: 10px' class='ml-2'>({{ ratingLabel }})</span>
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </div>
+                  </v-card-text>
+
+                  <v-divider></v-divider>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      text
+                      @click='dialog = false'
+                    >
+                      关闭
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+              <v-row justify='center'>
+                <v-col cols='12' md='6'>
+                  <v-btn color='primary' width='100%' @click.stop='submit' class='mr-4'><v-icon size='medium'>mdi-checkbox-marked-circle</v-icon>立即计算</v-btn>
+                </v-col>
+              </v-row>
+              <v-row justify='center'>
+                <v-col cols='12' md='6'>
+                  <v-btn @click='resetForm' width='100%'>
+                    <v-icon size='medium'>mdi-refresh</v-icon>
+                    重置数据
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-col>
+      </v-row>
+      <!-- 鸣谢纸片 -->
+      <v-row justify='center'>
+        <v-col cols='12' xs='6'>
+          <div style='display: flex; justify-content: center'>
+            <v-chip
+              class='ma-4'
+              color='cyan'
+              label
+              @click='toUrl(0)'
+            >
+              <v-icon left color='white'>
+                mdi-account-circle-outline
+              </v-icon>
+              <span style='color: white'>算法提供: @泡椒啊</span>
+            </v-chip>
+          </div>
+          <div style='display: flex; justify-content: center'>
+            <v-chip
+              class='ma-4'
+              color='pink'
+              label
+              @click='toUrl(1)'
+            >
+              <v-icon left color='white'>
+                mdi-laptop
+              </v-icon>
+              <span style='color: white'>Powered By: @Cruii</span>
+            </v-chip>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
