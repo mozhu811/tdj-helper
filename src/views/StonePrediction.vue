@@ -35,71 +35,34 @@
       <v-spacer/>
     </v-row>
     <v-row>
-      <v-col>
-        <v-form v-model='model' ref='form'>
-          <v-container>
-            <v-row justify='center' align='center'>
-              <v-col cols='12' md='8'>
-                <!--                <v-select-->
-                <!--                  v-model='items'-->
-                <!--                  :items='properties'-->
-                <!--                  :rules='indexRule'-->
-                <!--                  item-text='name'-->
-                <!--                  item-value='index'-->
-                <!--                  no-data-text='魂石词条'-->
-                <!--                  label='魂石词条'-->
-                <!--                  multiple-->
-                <!--                  chips-->
-                <!--                >-->
-                <!--                  <template v-slot:selection='{ item, index }'>-->
-                <!--                    &lt;!&ndash; 手机端不完全显示词条，防止占用多行 &ndash;&gt;-->
-                <!--                    <v-chip small v-if='index < visibleChips && mobile'>-->
-                <!--                      <v-icon :size='screenMaxWidth <= 375 ? 10 : 16' left>{{ item.icon }}</v-icon>-->
-                <!--                      <span>{{ item.name }}</span>-->
-                <!--                    </v-chip>-->
-                <!--                    <v-chip small v-if='index >= visibleChips && mobile'>-->
-                <!--                      <v-icon :size='screenMaxWidth <= 375 ? 10 : 16' left>{{ item.icon }}</v-icon>-->
-                <!--                      <span>...</span>-->
-                <!--                    </v-chip>-->
-
-                <!--                    <v-chip v-if='!mobile'>-->
-                <!--                      <v-icon small left>{{ item.icon }}</v-icon>-->
-                <!--                      <span>{{ item.name }}</span>-->
-                <!--                    </v-chip>-->
-                <!--                  </template>-->
-                <!--                  <template v-slot:item='{  active, item, attrs, on }'>-->
-                <!--                    <v-list-item v-on='on' v-bind='attrs' #default='{ active }'>-->
-                <!--                      <v-list-item-action>-->
-                <!--                        <v-checkbox :input-value='active'></v-checkbox>-->
-                <!--                      </v-list-item-action>-->
-                <!--                      <v-icon small left>{{ item.icon }}</v-icon>-->
-                <!--                      {{ item.name }}-->
-                <!--                    </v-list-item>-->
-                <!--                  </template>-->
-                <!--                </v-select>-->
-                <v-row justify='center'>
-                  <v-col v-for='(item) in properties' :key='item.index' cols='5' md='4'>
+      <v-form v-model='model' ref='form'>
+        <v-container>
+          <v-row justify='center'>
+            <v-col :cols='12' :md='8'>
+              <v-row justify='space-between' no-gutters>
+                <v-col v-for='(item) in properties' :key='item.index' :cols='5' :md='3'>
+                  <div style='display: flex; justify-content: end;' :class="mobile? '' : 'ml-10'">
                     <v-checkbox v-model='items' :value='item.index'>
                       <template v-slot:label>
-                        <div>
-                          <v-icon small left>{{ item.icon }}</v-icon>
-                          {{ item.name }}
-                        </div>
+                        <v-icon small left>{{ item.icon }}</v-icon>
+                        {{ item.name }}
                       </template>
                     </v-checkbox>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-            <v-row justify='center'>
-              <v-col cols='12' md='8'>
-                <v-btn color='primary' width='100%' @click.stop='submit' class='mr-4'>
-                  <v-icon size='medium'>mdi-checkbox-marked-circle</v-icon>立即预测</v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-form>
-      </v-col>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row justify='center'>
+            <v-col :cols='12' :md='8'>
+              <v-btn color='primary' width='100%' @click.stop='submit' class='mr-4'>
+                <v-icon size='medium'>mdi-checkbox-marked-circle</v-icon>
+                立即预测
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-form>
     </v-row>
     <!-- 鸣谢纸片 -->
     <v-row justify='center'>
@@ -115,19 +78,6 @@
               mdi-account-circle-outline
             </v-icon>
             <span style='color: white'>算法提供: @泡椒啊</span>
-          </v-chip>
-        </div>
-        <div style='display: flex; justify-content: center'>
-          <v-chip
-            class='ma-4'
-            color='pink'
-            label
-            @click='toUrl(1)'
-          >
-            <v-icon left color='white'>
-              mdi-laptop
-            </v-icon>
-            <span style='color: white'>Powered By: @Cruii</span>
           </v-chip>
         </div>
       </v-col>
@@ -218,6 +168,26 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 错误提示消息条 -->
+    <v-snackbar
+      top
+      app
+      v-model="snackbar"
+      :timeout='3000'
+    >
+      请选择4条魂石属性
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="blue"
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -228,6 +198,7 @@ export default {
     model: true,
     position: 'tian',
     mobile: false,
+    snackbar: false,
     dialog: false,
     rating: 6,
     items: [],
@@ -365,7 +336,7 @@ export default {
       }
     },
     submit () {
-      const valid = this.$refs.form.validate()
+      const valid = this.items.length === 4
       if (valid) {
         this.stone = this.items.map(i => this.properties.filter(p => p.index === i)[0])
         if (this.position === 'tian') {
@@ -391,6 +362,8 @@ export default {
           })
         }
         this.dialog = true
+      } else {
+        this.snackbar = true
       }
     },
     handlePositionChange () {
