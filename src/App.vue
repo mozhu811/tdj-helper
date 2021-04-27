@@ -12,29 +12,6 @@
           gradient='to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)'
         ></v-img>
       </template>
-
-      <!--      <v-app-bar-nav-icon ></v-app-bar-nav-icon>-->
-      <v-toolbar-title>
-        <span style='font-family: xingticaoshu,serif; font-weight: bold; font-size: 30px'>{{ title }}</span>
-      </v-toolbar-title>
-
-      <v-spacer></v-spacer>
-
-      <template v-slot:extension>
-        <v-tabs
-          v-model='tab'
-          centered
-          slider-color='yellow'
-        >
-          <v-tab
-            v-for='item in items'
-            :key='item.name'
-            @click='$router.push(item.path)'
-          >
-            {{ item.name }}
-          </v-tab>
-        </v-tabs>
-      </template>
     </v-app-bar>
 
     <v-main>
