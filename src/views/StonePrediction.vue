@@ -44,25 +44,25 @@
                   <div style='display: flex; justify-content: end;' :class="mobile? '' : 'ml-10'">
                     <v-checkbox v-model='items' :value='item.index'>
                       <template v-slot:label>
-                        <div>
-                          <v-icon small left>{{ item.icon }}</v-icon>
-                          {{ item.name }}
-                        </div>
+                        <v-icon small left>{{ item.icon }}</v-icon>
+                        {{ item.name }}
                       </template>
                     </v-checkbox>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-            <v-row justify='center'>
-              <v-col cols='12' md='8'>
-                <v-btn color='primary' width='100%' @click.stop='submit' class='mr-4'>
-                  <v-icon size='medium'>mdi-checkbox-marked-circle</v-icon>立即预测</v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-form>
-      </v-col>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row justify='center'>
+            <v-col :cols='12' :md='8'>
+              <v-btn color='primary' width='100%' @click.stop='submit' class='mr-4'>
+                <v-icon size='medium'>mdi-checkbox-marked-circle</v-icon>
+                立即预测
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-form>
     </v-row>
     <!-- 鸣谢纸片 -->
     <v-row justify='center'>
@@ -168,6 +168,26 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 错误提示消息条 -->
+    <v-snackbar
+      top
+      app
+      v-model="snackbar"
+      :timeout='3000'
+    >
+      请选择4条魂石属性
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="blue"
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -178,6 +198,7 @@ export default {
     model: true,
     position: 'tian',
     mobile: false,
+    snackbar: false,
     dialog: false,
     rating: 6,
     items: [],
@@ -315,7 +336,7 @@ export default {
       }
     },
     submit () {
-      const valid = this.$refs.form.validate()
+      const valid = this.items.length === 4
       if (valid) {
         this.stone = this.items.map(i => this.properties.filter(p => p.index === i)[0])
         if (this.position === 'tian') {
@@ -341,6 +362,8 @@ export default {
           })
         }
         this.dialog = true
+      } else {
+        this.snackbar = true
       }
     },
     handlePositionChange () {
