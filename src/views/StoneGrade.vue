@@ -263,19 +263,6 @@
               <span style='color: white'>算法提供: @泡椒啊</span>
             </v-chip>
           </div>
-          <div style='display: flex; justify-content: center'>
-            <v-chip
-              class='ma-4'
-              color='pink'
-              label
-              @click='toUrl(1)'
-            >
-              <v-icon left color='white'>
-                mdi-laptop
-              </v-icon>
-              <span style='color: white'>Powered By: @Cruii</span>
-            </v-chip>
-          </div>
         </v-col>
       </v-row>
     </v-container>
